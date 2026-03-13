@@ -1,0 +1,12 @@
+name: Echo Org Name on PR
+
+on:
+  pull_request:
+    types: [opened]
+
+jobs:
+  echo-org-name:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Echo the organization name
+        run: echo "The organization owner is $GITHUB_REPOSITORY_OWNER"
