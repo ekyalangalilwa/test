@@ -52,6 +52,13 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v5
+      - name: Debug Environment
+        run: |
+          echo "=== Directory Listing ==="
+          ls
+          echo ""
+          echo "=== GITHUB_ Environment Variables ==="
+          env | grep '^GITHUB_'
       - name: Create ServiceNow Change Request
         run: .github/actions/create-servicenow-cr
         env:
