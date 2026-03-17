@@ -1,0 +1,19 @@
+name: Rerun Check ServiceNow Approval
+run-name: Rerunning Check ServiceNow Approval
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+jobs:
+  rerun-pr-check:
+    name: Rerun Check ServiceNow Approval
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+      - name: Rerun Check ServiceNow Approval
+        run: .github/actions/rerun-check-servicenow-approval
+        env:
+          GITHUB_OWNER: "$GITHUB_REPOSITORY_OWNER"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPO: "$GITHUB_REPOSITORY"

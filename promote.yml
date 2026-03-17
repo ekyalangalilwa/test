@@ -1,0 +1,104 @@
+name: Promote to Environment
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Target environment to promote to"
+        required: true
+        type: choice
+        options:
+          - dev
+          - qa
+          - prod
+      component:
+        description: "Component(s) to promote"
+        required: true
+        type: choice
+        options:
+          - both
+          - backend
+          - frontend
+        default: both
+      tag:
+        description: "Docker image tag to promote (leave empty to use source-environment)"
+        required: false
+        type: string
+      source-environment:
+        description: "Copy version from this environment (only if tag is empty)"
+        required: true
+        type: choice
+        options:
+          - dev
+          - qa
+          - prod
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  prepare-promotions:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Stub
+        run: echo "[STUB] prepare-promotions skipped for testing"
+
+  create-snow-request:
+    name: Create ServiceNow Change Request
+    needs: [prepare-promotions]
+    runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.environment == 'prod' }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+      - name: Debug Environment
+        run: |
+          echo "=== Directory Listing ==="
+          ls
+          echo ""
+          echo "=== GITHUB_ Environment Variables ==="
+          env | grep '^GITHUB_'
+      - name: Create ServiceNow Change Request
+        run: .github/actions/create-servicenow-cr
+        env:
+          GITHUB_OWNER: ${{ vars.REPO_OWNER }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPO: ${{ vars.REPO }}
+          JIRA_URL: ${{ vars.JIRA_URL }}
+          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+          JIRA_USER_EMAIL_ADDRESS: ${{ vars.JIRA_USER_EMAIL_ADDRESS }}
+          SNOW_USER: ${{ vars.SNOW_USER }}
+          SNOW_URL: ${{ vars.SNOW_URL }}
+          SNOW_PASSWORD: ${{ secrets.SNOW_PASSWORD }}
+
+  check-for-approval:
+    name: Check Change Request Approval
+    needs: [create-snow-request]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+      - name: Check Change Request Approval
+        run: .github/actions/check-servicenow-approval
+        env:
+          SNOW_USER: ${{ vars.SNOW_USER }}
+          SNOW_URL: ${{ vars.SNOW_URL }}
+          SNOW_PASSWORD: ${{ secrets.SNOW_PASSWORD }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  promote:
+    needs: [prepare-promotions, check-for-approval]
+    runs-on: ubuntu-latest
+    if: ${{ needs.check-for-approval.result == 'success' }}
+    steps:
+      - name: Stub
+        run: echo "[STUB] promote skipped for testing"
+
+  create-release:
+    needs: [promote]
+    runs-on: ubuntu-latest
+    if: ${{ needs.promote.result == 'success' }}
+    steps:
+      - name: Stub
+        run: echo "[STUB] create-release skipped for testing"
