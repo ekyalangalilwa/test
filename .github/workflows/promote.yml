@@ -91,7 +91,7 @@ jobs:
   create-release:
     needs: [promote]
     runs-on: ubuntu-latest
-    if: ${{ always() }}
+    if: ${{ needs.promote.result == 'success' }}
     steps:
       - name: Stub
         run: echo "[STUB] create-release skipped for testing"
