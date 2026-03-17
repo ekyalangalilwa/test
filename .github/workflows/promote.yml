@@ -83,7 +83,7 @@ jobs:
   promote:
     needs: [prepare-promotions, check-for-approval]
     runs-on: ubuntu-latest
-    if: ${{ success() }}
+    if: ${{ needs.check-for-approval.result == 'success' }}
     steps:
       - name: Stub
         run: echo "[STUB] promote skipped for testing"
@@ -91,7 +91,7 @@ jobs:
   create-release:
     needs: [promote]
     runs-on: ubuntu-latest
-    if: ${{ success() }}
+    if: ${{ always() }}
     steps:
       - name: Stub
         run: echo "[STUB] create-release skipped for testing"
