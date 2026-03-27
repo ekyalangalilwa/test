@@ -45,7 +45,6 @@ jobs:
         run: echo "[STUB] prepare-promotions skipped for testing"
 
   create-snow-request:
-    name: Create ServiceNow Change Request
     needs: [prepare-promotions]
     runs-on: ubuntu-latest
     if: ${{ github.event.inputs.environment == 'prod' }}
@@ -73,7 +72,6 @@ jobs:
           SNOW_PASSWORD: ${{ secrets.SNOW_PASSWORD }}
 
   check-for-approval:
-    name: Check Change Request Approval
     needs: [create-snow-request]
     runs-on: ubuntu-latest
     steps:
