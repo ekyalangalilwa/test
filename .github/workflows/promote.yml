@@ -71,7 +71,7 @@ jobs:
           echo "=== GITHUB_ Environment Variables ==="
           env | grep '^GITHUB_'
       - name: Create ServiceNow Change Request
-        run: .github/actions/create-servicenow-cr
+        run: .github/actions/create-servicenow-cr --release-version="${{ github.event.inputs.jira-release-version }}"
         env:
           GITHUB_OWNER: ${{ vars.REPO_OWNER }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
