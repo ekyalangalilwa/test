@@ -32,6 +32,10 @@ on:
           - dev
           - qa
           - prod
+      jira-release-version:
+        description: "Jira release version to search for associated work items (e.g. 1.2.3)"
+        required: false
+        type: string
 
 permissions:
   contents: write
@@ -44,8 +48,16 @@ jobs:
       - name: Stub
         run: echo "[STUB] prepare-promotions skipped for testing"
 
-  create-snow-request:
+  fetch-jira-work-items:
+    name: Fetch Jira Work Items
     needs: [prepare-promotions]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Echo Jira Release Version
+        run: 'echo "Jira release version: ${{ github.event.inputs.jira-release-version }}"'
+
+  create-snow-request:
+    needs: [prepare-promotions, fetch-jira-work-items]
     runs-on: ubuntu-latest
     if: ${{ github.event.inputs.environment == 'prod' }}
     steps:
