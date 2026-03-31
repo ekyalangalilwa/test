@@ -48,8 +48,7 @@ jobs:
       - name: Stub
         run: echo "[STUB] prepare-promotions skipped for testing"
 
-  fetch-jira-work-items:
-    name: Fetch Jira Work Items
+  fetch-release-from-jira:
     needs: [prepare-promotions]
     runs-on: ubuntu-latest
     steps:
@@ -57,7 +56,7 @@ jobs:
         run: 'echo "Jira release version: ${{ github.event.inputs.jira-release-version }}"'
 
   create-snow-request:
-    needs: [prepare-promotions, fetch-jira-work-items]
+    needs: [prepare-promotions, fetch-release-from-jira]
     runs-on: ubuntu-latest
     if: ${{ github.event.inputs.environment == 'prod' }}
     steps:
